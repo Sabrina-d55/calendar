@@ -1,0 +1,167 @@
+/* Events Calendar — styles. Loaded via jsDelivr. */
+/* ================= EVENTS CALENDAR — MONTH VIEW ================= */
+/* Scoped under #ec-cal so it won't fight the Webflow site styles.  */
+#ec-cal *{box-sizing:border-box;margin:0;padding:0}
+#ec-cal{
+  --ec-bg:#ffffff;
+  --ec-ink:#1a1a1a;
+  --ec-muted:#8a8f98;
+  --ec-line:#e6e8ec;
+  --ec-hover:#f5f6f8;
+  --ec-today:#fff4ec;
+  --ec-accent:#c0392b;            /* neutral fallback accent */
+  --ec-radius:10px;
+  --ec-shadow:0 8px 30px rgba(20,20,30,.12);
+  font-family:inherit;            /* inherit Webflow site font */
+  color:var(--ec-ink);
+  max-width:1080px;margin:0 auto;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* --- Toolbar --- */
+#ec-cal .ec-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+#ec-cal .ec-nav{display:flex;align-items:center;gap:6px}
+#ec-cal .ec-arrow{
+  width:38px;height:38px;border:1px solid var(--ec-line);background:var(--ec-bg);
+  border-radius:50%;cursor:pointer;font-size:16px;color:var(--ec-ink);
+  display:flex;align-items:center;justify-content:center;transition:all .15s ease}
+#ec-cal .ec-arrow:hover{background:var(--ec-hover);border-color:#d3d6db}
+#ec-cal .ec-title{font-size:22px;font-weight:600;letter-spacing:-.01em;min-width:190px}
+#ec-cal .ec-today-btn{
+  padding:9px 16px;border:1px solid var(--ec-line);background:var(--ec-bg);
+  border-radius:99px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ec-ink);
+  transition:all .15s ease}
+#ec-cal .ec-today-btn:hover{background:var(--ec-hover)}
+#ec-cal .ec-filters{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+#ec-cal .ec-select{position:relative}
+#ec-cal .ec-select select{
+  appearance:none;-webkit-appearance:none;
+  padding:9px 34px 9px 14px;border:1px solid var(--ec-line);background:var(--ec-bg);
+  border-radius:99px;font-size:13px;color:var(--ec-ink);cursor:pointer;font-family:inherit;
+  transition:border-color .15s ease}
+#ec-cal .ec-select select:hover{border-color:#d3d6db}
+#ec-cal .ec-select::after{
+  content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;
+  border-right:2px solid var(--ec-muted);border-bottom:2px solid var(--ec-muted);
+  transform:translateY(-70%) rotate(45deg);pointer-events:none}
+
+/* --- Category pills --- */
+#ec-cal .ec-pills{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 18px}
+#ec-cal .ec-pill{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:38px;padding:0 16px;border:1.5px solid var(--ec-line);background:var(--ec-bg);
+  border-radius:99px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ec-ink);
+  font-family:inherit;line-height:1;transition:all .15s ease}
+#ec-cal .ec-pill:hover{border-color:#c9ccd2;background:var(--ec-hover)}
+#ec-cal .ec-pill img{height:20px;width:auto;max-width:120px;object-fit:contain;display:block}
+#ec-cal .ec-pill.ec-on{border-color:var(--ec-c);background:var(--ec-c-soft);color:var(--ec-c)}
+#ec-cal .ec-pill.ec-on:hover{background:var(--ec-c-soft)}
+
+/* --- Weekday header --- */
+#ec-cal .ec-dow{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--ec-line);
+  border-left:1px solid var(--ec-line)}
+#ec-cal .ec-dow span{padding:10px 12px;font-size:11px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ec-muted);border-right:1px solid var(--ec-line);
+  border-bottom:1px solid var(--ec-line)}
+
+/* --- Grid --- */
+#ec-cal .ec-week{display:grid;grid-template-columns:repeat(7,1fr);position:relative;
+  border-left:1px solid var(--ec-line)}
+#ec-cal .ec-cell{min-height:118px;border-right:1px solid var(--ec-line);
+  border-bottom:1px solid var(--ec-line);padding:8px 8px 6px;background:var(--ec-bg);position:relative}
+#ec-cal .ec-cell.ec-out{background:#fbfbfc}
+#ec-cal .ec-cell.ec-out .ec-daynum{color:#c4c8ce}
+#ec-cal .ec-daynum{font-size:13px;font-weight:500;color:var(--ec-ink);
+  width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+#ec-cal .ec-cell.ec-today .ec-daynum{background:var(--ec-accent);color:#fff}
+#ec-cal .ec-cell.ec-today{background:var(--ec-today)}
+
+/* --- Event bars overlay (spanning multi-day) --- */
+#ec-cal .ec-bars{position:absolute;left:0;right:0;top:36px;display:grid;
+  grid-template-columns:repeat(7,1fr);gap:3px 0;pointer-events:none;padding:0}
+#ec-cal .ec-bar{
+  pointer-events:auto;cursor:pointer;margin:0 5px;height:22px;line-height:22px;
+  font-size:11.5px;font-weight:500;color:#fff;border-radius:5px;padding:0 8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:var(--ec-c,#6b7280);transition:filter .12s ease}
+#ec-cal .ec-bar:hover{filter:brightness(1.08)}
+#ec-cal .ec-bar.ec-cont-l{margin-left:0;border-top-left-radius:0;border-bottom-left-radius:0}
+#ec-cal .ec-bar.ec-cont-r{margin-right:0;border-top-right-radius:0;border-bottom-right-radius:0}
+#ec-cal .ec-bar .ec-dot{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.9);margin-right:6px;vertical-align:middle}
+#ec-cal .ec-more{pointer-events:auto;cursor:pointer;font-size:11px;font-weight:600;
+  color:var(--ec-muted);margin:1px 5px 0;padding:1px 4px;border-radius:4px}
+#ec-cal .ec-more:hover{background:var(--ec-hover);color:var(--ec-ink)}
+
+/* --- Popup --- */
+#ec-cal .ec-overlay{position:fixed;inset:0;background:rgba(18,20,26,.55);
+  display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;
+  backdrop-filter:blur(2px)}
+#ec-cal .ec-overlay.ec-open{display:flex}
+#ec-cal .ec-modal{background:var(--ec-bg);border-radius:16px;max-width:460px;width:100%;
+  max-height:88vh;overflow:auto;box-shadow:var(--ec-shadow);position:relative;
+  animation:ec-pop .18s ease}
+@keyframes ec-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+#ec-cal .ec-modal img.ec-hero{width:100%;height:210px;object-fit:cover;display:block;
+  border-radius:16px 16px 0 0;background:var(--ec-hover)}
+#ec-cal .ec-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:none;
+  border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+#ec-cal .ec-x:hover{background:rgba(0,0,0,.6)}
+#ec-cal .ec-body{padding:22px 24px 24px}
+#ec-cal .ec-cat-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--ec-c,#6b7280);margin-bottom:10px}
+#ec-cal .ec-cat-tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ec-c,#6b7280)}
+#ec-cal .ec-modal h3{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-bottom:12px;line-height:1.2}
+#ec-cal .ec-meta{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;
+  padding-bottom:16px;border-bottom:1px solid var(--ec-line)}
+#ec-cal .ec-meta div{font-size:14px;color:#40454d;display:flex;gap:9px;align-items:flex-start}
+#ec-cal .ec-meta .ec-ic{flex:none;width:16px;text-align:center;color:var(--ec-muted);margin-top:1px}
+#ec-cal .ec-desc{font-size:14px;line-height:1.6;color:#40454d;margin-bottom:20px}
+#ec-cal .ec-desc p{margin-bottom:10px}
+#ec-cal .ec-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+#ec-cal .ec-btn{padding:11px 18px;border-radius:99px;font-size:14px;font-weight:600;
+  cursor:pointer;text-decoration:none;border:none;display:inline-flex;align-items:center;
+  gap:7px;font-family:inherit;transition:all .15s ease}
+#ec-cal .ec-btn-primary{background:var(--ec-c,var(--ec-accent));color:#fff}
+#ec-cal .ec-btn-primary:hover{filter:brightness(1.08)}
+#ec-cal .ec-btn-ghost{background:var(--ec-hover);color:var(--ec-ink)}
+#ec-cal .ec-btn-ghost:hover{background:#ebedf0}
+#ec-cal .ec-actions{display:flex;gap:18px;padding-top:14px;border-top:1px solid var(--ec-line)}
+#ec-cal .ec-action{background:none;border:none;cursor:pointer;font-size:13px;font-weight:500;
+  color:var(--ec-muted);display:inline-flex;align-items:center;gap:6px;font-family:inherit;
+  padding:0;transition:color .15s ease}
+#ec-cal .ec-action:hover{color:var(--ec-ink)}
+#ec-cal .ec-atc{position:relative}
+#ec-cal .ec-atc-menu{position:absolute;bottom:calc(100% + 8px);left:0;background:var(--ec-bg);
+  border:1px solid var(--ec-line);border-radius:10px;box-shadow:var(--ec-shadow);
+  padding:6px;display:none;min-width:170px;z-index:3}
+#ec-cal .ec-atc-menu.ec-open{display:block}
+#ec-cal .ec-atc-menu a{display:block;padding:9px 12px;font-size:13px;color:var(--ec-ink);
+  text-decoration:none;border-radius:6px}
+#ec-cal .ec-atc-menu a:hover{background:var(--ec-hover)}
+
+/* --- Mobile: list view (Option B / Heritage-style) --- */
+#ec-cal .ec-list{display:none}
+@media(max-width:720px){
+  #ec-cal .ec-dow,#ec-cal .ec-grid{display:none}
+  #ec-cal .ec-list{display:block}
+  #ec-cal .ec-toolbar{gap:12px}
+  #ec-cal .ec-filters{margin-left:0;width:100%}
+  #ec-cal .ec-select select{width:100%}
+  #ec-cal .ec-filters .ec-select{flex:1}
+  #ec-cal .ec-title{min-width:0;flex:1;font-size:19px}
+  #ec-cal .ec-list-day{margin-bottom:22px}
+  #ec-cal .ec-list-date{font-size:12px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--ec-muted);margin-bottom:8px;
+    display:flex;align-items:baseline;gap:8px}
+  #ec-cal .ec-list-date b{font-size:15px;color:var(--ec-ink)}
+  #ec-cal .ec-lcard{display:flex;gap:12px;padding:12px;border:1px solid var(--ec-line);
+    border-radius:12px;margin-bottom:10px;cursor:pointer;border-left:4px solid var(--ec-c,#6b7280)}
+  #ec-cal .ec-lcard:active{background:var(--ec-hover)}
+  #ec-cal .ec-lcard img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex:none;background:var(--ec-hover)}
+  #ec-cal .ec-lcard .ec-lc-body{min-width:0}
+  #ec-cal .ec-lcard h4{font-size:15px;font-weight:600;margin-bottom:3px}
+  #ec-cal .ec-lcard .ec-lc-meta{font-size:12.5px;color:var(--ec-muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #ec-cal .ec-empty{padding:40px 12px;text-align:center;color:var(--ec-muted);font-size:14px}
+}
