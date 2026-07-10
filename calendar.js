@@ -1,4 +1,4 @@
-/* Events Calendar — script. Loaded via jsDelivr. */
+/* Events Calendar v2 — Month/Week/Cards. */
 (function(){
   "use strict";
   const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -97,6 +97,7 @@
   /* ---------- state ---------- */
   let ALL = [];
   let view = (function(){var d=new Date();return new Date(d.getFullYear(),d.getMonth(),1);})(); // current month
+  let mode = "month";                          // month | week | cards
   const f = {cats:new Set(), aud:"", loc:""};
 
   function filtered(){
@@ -373,17 +374,112 @@
       sel.innerHTML=keep+vals.map(v=>'<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>').join(''); }
   }
 
+  /* ---------- render week view ---------- */
+  function renderWeek(){
+    const wv=document.getElementById("ec-weekview"); wv.innerHTML="";
+    const anchor=startOfDay(view);
+    const wStart=addDays(anchor,-anchor.getDay());
+    const wEnd=addDays(wStart,6);
+    const inst=instancesInWindow(filtered(), wStart, wEnd);
+    const today=startOfDay(new Date());
+    for(let i=0;i<7;i++){
+      const d=addDays(wStart,i);
+      const col=document.createElement("div");
+      col.className="ec-wday"+(sameDay(d,today)?" ec-today":"");
+      col.innerHTML='<div class="ec-wday-head"><div class="ec-wd">'+DOW[d.getDay()]+'</div><div class="ec-wn">'+d.getDate()+'</div></div><div class="ec-wday-body"></div>';
+      const body=col.querySelector(".ec-wday-body");
+      inst.filter(it=> it.start<=d && it.end>=d)
+        .sort((a,b)=>a.ev.name.localeCompare(b.ev.name))
+        .forEach(it=>{
+          const e=document.createElement("div"); e.className="ec-wev";
+          const c=colorFor(it.ev);
+          e.style.setProperty("--ec-c",c);
+          e.style.setProperty("--ec-c-soft",hexToRgba(c,.10));
+          e.innerHTML='<div class="ec-wev-t">'+escapeHtml(it.ev.name)+'</div>'+
+            '<div class="ec-wev-m">'+escapeHtml([it.ev.timeText,it.ev.location].filter(Boolean).join(" · "))+'</div>';
+          e.addEventListener("click",()=>openModal(it.ev,it.start));
+          body.appendChild(e);
+        });
+      wv.appendChild(col);
+    }
+  }
+
+  /* ---------- render cards view ---------- */
+  function renderCards(){
+    const cv=document.getElementById("ec-cards"); cv.innerHTML="";
+    const y=view.getFullYear(), m=view.getMonth();
+    const mStart=new Date(y,m,1), mEnd=new Date(y,m+1,0);
+    const inst=instancesInWindow(filtered(), mStart, mEnd)
+      .filter(it=> it.end>=mStart && it.start<=mEnd);
+    // one card per event per month: recurring events collapse to their first occurrence
+    const seen=new Set(); const cards=[];
+    inst.sort((a,b)=> a.start-b.start || a.ev.name.localeCompare(b.ev.name));
+    inst.forEach(it=>{
+      const k=it.ev.slug||it.ev.name;
+      if(it.ev.recurring){ if(seen.has(k)) return; seen.add(k); }
+      cards.push(it);
+    });
+    if(!cards.length){ cv.innerHTML='<div class="ec-cards-empty">No events this month.</div>'; return; }
+    cards.forEach(it=>{
+      const ev=it.ev, c=colorFor(ev);
+      const el=document.createElement("div"); el.className="ec-card";
+      el.style.setProperty("--ec-c",c);
+      const dateLabel = ev.recurring
+        ? "Recurring · from "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()
+        : (sameDay(it.start,it.end)
+            ? DOW[it.start.getDay()]+", "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()
+            : MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()+" – "+MON[it.end.getMonth()].slice(0,3)+" "+it.end.getDate());
+      el.innerHTML=(ev.image?'<img src="'+ev.image+'" alt="" loading="lazy">':'')+
+        '<div class="ec-card-body"><div class="ec-card-cat">'+escapeHtml(ev.category||"Event")+'</div>'+
+        '<h4>'+escapeHtml(ev.name)+'</h4>'+
+        '<div class="ec-card-meta">'+escapeHtml(dateLabel)+(ev.timeText?'<br>'+escapeHtml(ev.timeText):'')+
+        (ev.location?'<br>'+escapeHtml(ev.location):'')+'</div></div>';
+      el.addEventListener("click",()=>openModal(ev,it.start));
+      cv.appendChild(el);
+    });
+  }
+
   /* ---------- render + wire ---------- */
   function render(){
-    document.getElementById("ec-title").textContent=MON[view.getMonth()]+" "+view.getFullYear();
-    renderGrid(); renderList();
+    const t=document.getElementById("ec-title");
+    const grid=document.getElementById("ec-grid"), wv=document.getElementById("ec-weekview"),
+          cv=document.getElementById("ec-cards"), dow=document.querySelector("#ec-cal .ec-dow");
+    if(mode==="week"){
+      const a=startOfDay(view), ws=addDays(a,-a.getDay()), we=addDays(ws,6);
+      t.textContent = ws.getMonth()===we.getMonth()
+        ? MON[ws.getMonth()]+" "+ws.getDate()+" – "+we.getDate()+", "+we.getFullYear()
+        : MON[ws.getMonth()].slice(0,3)+" "+ws.getDate()+" – "+MON[we.getMonth()].slice(0,3)+" "+we.getDate()+", "+we.getFullYear();
+    } else {
+      t.textContent=MON[view.getMonth()]+" "+view.getFullYear();
+    }
+    grid.style.display = mode==="month" ? "" : "none";
+    if(dow) dow.style.display = mode==="month" ? "" : "none";
+    wv.classList.toggle("ec-show", mode==="week");
+    cv.classList.toggle("ec-show", mode==="cards");
+    document.getElementById("ec-list").classList.toggle("ec-hide", mode!=="month");
+    if(mode==="month"){ renderGrid(); renderList(); }
+    else if(mode==="week"){ renderWeek(); }
+    else { renderCards(); }
   }
   function init(){
     ALL=readEvents(); fillFilters(); renderPills(); render();
     document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>{
-      view=new Date(view.getFullYear(),view.getMonth()+ +b.dataset.nav,1); render();
+      const dir=+b.dataset.nav;
+      if(mode==="week"){ view=addDays(startOfDay(view),dir*7); }
+      else { view=new Date(view.getFullYear(),view.getMonth()+dir,1); }
+      render();
     }));
-    document.getElementById("ec-today").addEventListener("click",()=>{ view=startOfDay(new Date()); view.setDate(1); render(); });
+    document.getElementById("ec-today").addEventListener("click",()=>{
+      view=startOfDay(new Date()); if(mode!=="week") view.setDate(1); render();
+    });
+    document.querySelectorAll("#ec-views .ec-view-btn").forEach(b=>b.addEventListener("click",()=>{
+      mode=b.dataset.view;
+      document.querySelectorAll("#ec-views .ec-view-btn").forEach(x=>x.classList.toggle("ec-on",x===b));
+      if(mode==="week"){ const now=startOfDay(new Date());
+        if(now.getFullYear()===view.getFullYear() && now.getMonth()===view.getMonth()) view=now; }
+      else { view=new Date(view.getFullYear(),view.getMonth(),1); }
+      render();
+    }));
     document.getElementById("ec-f-aud").addEventListener("change",e=>{f.aud=e.target.value;render();});
     document.getElementById("ec-f-loc").addEventListener("change",e=>{f.loc=e.target.value;render();});
     document.getElementById("ec-overlay").addEventListener("click",e=>{ if(e.target.id==="ec-overlay") closeModal(); });
