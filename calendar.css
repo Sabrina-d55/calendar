@@ -19,20 +19,31 @@
 }
 
 /* --- Toolbar --- */
-#ec-cal .ec-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-#ec-cal .ec-nav{display:flex;align-items:center;gap:6px}
+#ec-cal .ec-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+#ec-cal .ec-nav{display:flex;align-items:center;gap:2px}
 #ec-cal .ec-arrow{
-  width:38px;height:38px;border:1px solid var(--ec-line);background:var(--ec-bg);
-  border-radius:50%;cursor:pointer;font-size:16px;color:var(--ec-ink);
-  display:flex;align-items:center;justify-content:center;transition:all .15s ease}
-#ec-cal .ec-arrow:hover{background:var(--ec-hover);border-color:#d3d6db}
-#ec-cal .ec-title{font-size:22px;font-weight:600;letter-spacing:-.01em;min-width:190px}
+  width:32px;height:32px;border:none;background:transparent;
+  cursor:pointer;font-size:19px;color:var(--ec-ink);
+  display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background .15s ease}
+#ec-cal .ec-arrow:hover{background:var(--ec-hover)}
+#ec-cal .ec-title{font-size:20px;font-weight:600;letter-spacing:-.01em}
 #ec-cal .ec-today-btn{
-  padding:9px 16px;border:1px solid var(--ec-line);background:var(--ec-bg);
-  border-radius:99px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ec-ink);
-  transition:all .15s ease}
-#ec-cal .ec-today-btn:hover{background:var(--ec-hover)}
-#ec-cal .ec-filters{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+  display:inline-flex;align-items:center;gap:8px;
+  padding:0;border:none;background:transparent;
+  cursor:pointer;font-size:15px;font-weight:600;letter-spacing:.02em;color:var(--ec-ink);font-family:inherit}
+#ec-cal .ec-today-btn:hover .ec-today-num{background:var(--ec-hover)}
+#ec-cal .ec-today-num{display:inline-flex;align-items:center;justify-content:center;
+  min-width:26px;height:26px;padding:0 4px;border:1.5px solid var(--ec-ink);border-radius:7px;
+  font-size:13px;font-weight:600;transition:background .15s ease}
+/* view switcher: plain text links, active underlined */
+#ec-cal .ec-views{display:flex;gap:18px;margin-left:auto}
+#ec-cal .ec-view-btn{border:none;background:transparent;padding:2px 0;
+  font-size:14px;font-weight:400;color:var(--ec-ink);cursor:pointer;font-family:inherit;
+  border-bottom:2px solid transparent;border-radius:0;transition:border-color .15s ease}
+#ec-cal .ec-view-btn:hover{border-bottom-color:var(--ec-line)}
+#ec-cal .ec-view-btn.ec-on{font-weight:600;border-bottom-color:var(--ec-ink)}
+/* audience/location dropdowns: own row under the pills */
+#ec-cal .ec-filters{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 #ec-cal .ec-select{position:relative}
 #ec-cal .ec-select select{
   appearance:none;-webkit-appearance:none;
@@ -111,7 +122,7 @@
 #ec-cal .ec-cards-empty{grid-column:1/-1;padding:48px 12px;text-align:center;color:var(--ec-muted);font-size:14px}
 
 /* --- Category pills --- */
-#ec-cal .ec-pills{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 18px}
+#ec-cal .ec-pills{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 12px}
 #ec-cal .ec-pill{display:inline-flex;align-items:center;justify-content:center;gap:7px;
   min-height:38px;padding:0 16px;border:1.5px solid var(--ec-line);background:var(--ec-bg);
   border-radius:99px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ec-ink);
@@ -215,12 +226,12 @@
   #ec-cal .ec-wsday{padding:9px 2px 8px}
   #ec-cal .ec-wsday .ec-wd{font-size:9.5px}
   #ec-cal .ec-cards.ec-show{grid-template-columns:1fr}
-  #ec-cal .ec-views{order:3}
-  #ec-cal .ec-toolbar{gap:12px}
-  #ec-cal .ec-filters{margin-left:0;width:100%}
-  #ec-cal .ec-select select{width:100%}
+  #ec-cal .ec-toolbar{gap:10px}
+  #ec-cal .ec-views{margin-left:auto;gap:12px}
+  #ec-cal .ec-view-btn{font-size:13px}
   #ec-cal .ec-filters .ec-select{flex:1}
-  #ec-cal .ec-title{min-width:0;flex:1;font-size:19px}
+  #ec-cal .ec-select select{width:100%}
+  #ec-cal .ec-title{font-size:17px}
   #ec-cal .ec-list-day{margin-bottom:22px}
   #ec-cal .ec-list-date{font-size:12px;font-weight:700;text-transform:uppercase;
     letter-spacing:.05em;color:var(--ec-muted);margin-bottom:8px;
