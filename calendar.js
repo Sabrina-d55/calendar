@@ -510,7 +510,9 @@
     else { renderCards(); }
   }
   function init(){
-    ALL=readEvents(); fillFilters(); renderPills(); render();
+    ALL=readEvents(); fillFilters(); renderPills();
+    document.getElementById("ec-today-num").textContent=new Date().getDate();
+    render();
     document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>{
       const dir=+b.dataset.nav;
       if(mode==="week"){ view=addDays(startOfDay(view),dir*7); selDay=null; }
