@@ -1,4 +1,4 @@
-/* Events Calendar — styles. Loaded via jsDelivr. */
+/* Events Calendar v2 — Month/Week/Cards. */
 /* ================= EVENTS CALENDAR — MONTH VIEW ================= */
 /* Scoped under #ec-cal so it won't fight the Webflow site styles.  */
 #ec-cal *{box-sizing:border-box;margin:0;padding:0}
@@ -44,6 +44,45 @@
   content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;
   border-right:2px solid var(--ec-muted);border-bottom:2px solid var(--ec-muted);
   transform:translateY(-70%) rotate(45deg);pointer-events:none}
+
+/* --- View switcher --- */
+#ec-cal .ec-views{display:flex;gap:0;border:1px solid var(--ec-line);border-radius:99px;padding:3px;background:var(--ec-bg)}
+#ec-cal .ec-view-btn{border:none;background:transparent;padding:7px 15px;border-radius:99px;
+  font-size:13px;font-weight:500;color:var(--ec-muted);cursor:pointer;font-family:inherit;transition:all .15s ease}
+#ec-cal .ec-view-btn:hover{color:var(--ec-ink)}
+#ec-cal .ec-view-btn.ec-on{background:var(--ec-ink);color:#fff}
+
+/* --- Week view --- */
+#ec-cal .ec-weekview{display:none;grid-template-columns:repeat(7,1fr);border-left:1px solid var(--ec-line);
+  border-top:1px solid var(--ec-line)}
+#ec-cal .ec-weekview.ec-show{display:grid}
+#ec-cal .ec-wday{border-right:1px solid var(--ec-line);border-bottom:1px solid var(--ec-line);
+  min-height:340px;background:var(--ec-bg)}
+#ec-cal .ec-wday.ec-today{background:var(--ec-today)}
+#ec-cal .ec-wday-head{padding:10px 10px 8px;border-bottom:1px solid var(--ec-line)}
+#ec-cal .ec-wday-head .ec-wd{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ec-muted)}
+#ec-cal .ec-wday-head .ec-wn{font-size:19px;font-weight:600;margin-top:1px}
+#ec-cal .ec-wday.ec-today .ec-wn{color:var(--ec-accent)}
+#ec-cal .ec-wday-body{padding:8px 7px;display:flex;flex-direction:column;gap:6px}
+#ec-cal .ec-wev{cursor:pointer;border-left:3px solid var(--ec-c,#6b7280);background:var(--ec-c-soft,#f5f6f8);
+  border-radius:6px;padding:7px 9px;transition:filter .12s ease}
+#ec-cal .ec-wev:hover{filter:brightness(.97)}
+#ec-cal .ec-wev .ec-wev-t{font-size:12.5px;font-weight:600;line-height:1.25;color:var(--ec-ink)}
+#ec-cal .ec-wev .ec-wev-m{font-size:11px;color:var(--ec-muted);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* --- Cards view --- */
+#ec-cal .ec-cards{display:none;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+#ec-cal .ec-cards.ec-show{display:grid}
+#ec-cal .ec-card{border:1px solid var(--ec-line);border-radius:14px;overflow:hidden;cursor:pointer;
+  background:var(--ec-bg);transition:box-shadow .15s ease,transform .15s ease;display:flex;flex-direction:column}
+#ec-cal .ec-card:hover{box-shadow:0 10px 28px rgba(20,20,30,.10);transform:translateY(-2px)}
+#ec-cal .ec-card img{width:100%;height:150px;object-fit:cover;display:block;background:var(--ec-hover)}
+#ec-cal .ec-card-body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+#ec-cal .ec-card-cat{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ec-c,#6b7280)}
+#ec-cal .ec-card h4{font-size:16px;font-weight:650;line-height:1.25}
+#ec-cal .ec-card-meta{font-size:12.5px;color:var(--ec-muted);line-height:1.45}
+#ec-cal .ec-cards-empty{grid-column:1/-1;padding:48px 12px;text-align:center;color:var(--ec-muted);font-size:14px}
 
 /* --- Category pills --- */
 #ec-cal .ec-pills{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 18px}
@@ -145,6 +184,13 @@
 @media(max-width:720px){
   #ec-cal .ec-dow,#ec-cal .ec-grid{display:none}
   #ec-cal .ec-list{display:block}
+  #ec-cal .ec-list.ec-hide{display:none}
+  #ec-cal .ec-weekview.ec-show{grid-template-columns:1fr}
+  #ec-cal .ec-wday{min-height:0}
+  #ec-cal .ec-wday-head{display:flex;align-items:baseline;gap:8px;padding:8px 10px}
+  #ec-cal .ec-wday-head .ec-wn{font-size:15px;margin:0}
+  #ec-cal .ec-cards.ec-show{grid-template-columns:1fr}
+  #ec-cal .ec-views{order:3}
   #ec-cal .ec-toolbar{gap:12px}
   #ec-cal .ec-filters{margin-left:0;width:100%}
   #ec-cal .ec-select select{width:100%}
