@@ -374,34 +374,56 @@
       sel.innerHTML=keep+vals.map(v=>'<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>').join(''); }
   }
 
-  /* ---------- render week view ---------- */
+  /* ---------- render week view (strip + day list) ---------- */
+  let selDay = null; // selected day in week mode
   function renderWeek(){
     const wv=document.getElementById("ec-weekview"); wv.innerHTML="";
     const anchor=startOfDay(view);
     const wStart=addDays(anchor,-anchor.getDay());
     const wEnd=addDays(wStart,6);
-    const inst=instancesInWindow(filtered(), wStart, wEnd);
     const today=startOfDay(new Date());
+    if(!selDay || selDay<wStart || selDay>wEnd){
+      selDay = (today>=wStart && today<=wEnd) ? today : wStart;
+    }
+    const inst=instancesInWindow(filtered(), wStart, wEnd);
+    // strip
+    const strip=document.createElement("div"); strip.className="ec-wstrip";
     for(let i=0;i<7;i++){
       const d=addDays(wStart,i);
-      const col=document.createElement("div");
-      col.className="ec-wday"+(sameDay(d,today)?" ec-today":"");
-      col.innerHTML='<div class="ec-wday-head"><div class="ec-wd">'+DOW[d.getDay()]+'</div><div class="ec-wn">'+d.getDate()+'</div></div><div class="ec-wday-body"></div>';
-      const body=col.querySelector(".ec-wday-body");
-      inst.filter(it=> it.start<=d && it.end>=d)
-        .sort((a,b)=>a.ev.name.localeCompare(b.ev.name))
-        .forEach(it=>{
-          const e=document.createElement("div"); e.className="ec-wev";
-          const c=colorFor(it.ev);
-          e.style.setProperty("--ec-c",c);
-          e.style.setProperty("--ec-c-soft",hexToRgba(c,.10));
-          e.innerHTML='<div class="ec-wev-t">'+escapeHtml(it.ev.name)+'</div>'+
-            '<div class="ec-wev-m">'+escapeHtml([it.ev.timeText,it.ev.location].filter(Boolean).join(" · "))+'</div>';
-          e.addEventListener("click",()=>openModal(it.ev,it.start));
-          body.appendChild(e);
-        });
-      wv.appendChild(col);
+      const dayInst=inst.filter(it=> it.start<=d && it.end>=d);
+      const dots=[...new Set(dayInst.map(it=>colorFor(it.ev)))].slice(0,4)
+        .map(c=>'<i style="background:'+c+'"></i>').join('');
+      const cell=document.createElement("div");
+      cell.className="ec-wsday"+(sameDay(d,selDay)?" ec-sel":"")+(sameDay(d,today)?" ec-today":"");
+      cell.innerHTML='<div class="ec-wd">'+DOW[d.getDay()]+'</div><span class="ec-wn">'+d.getDate()+'</span>'+
+        '<div class="ec-wdots">'+dots+'</div>';
+      cell.addEventListener("click",()=>{ selDay=d; renderWeek(); });
+      strip.appendChild(cell);
     }
+    wv.appendChild(strip);
+    // selected-day list
+    const list=document.createElement("div"); list.className="ec-wlist";
+    const dayInst=inst.filter(it=> it.start<=selDay && it.end>=selDay)
+      .sort((a,b)=>a.ev.name.localeCompare(b.ev.name));
+    if(!dayInst.length){
+      list.innerHTML='<div class="ec-wempty">No events on '+DOW[selDay.getDay()]+', '+MON[selDay.getMonth()]+' '+selDay.getDate()+'.</div>';
+    } else {
+      dayInst.forEach(it=>{
+        const ev=it.ev, c=colorFor(ev);
+        const row=document.createElement("div"); row.className="ec-wrow";
+        row.style.setProperty("--ec-c",c);
+        const dr = sameDay(it.start,it.end)
+          ? DOW[it.start.getDay()]+", "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()+", "+it.start.getFullYear()
+          : DOW[it.start.getDay()].slice(0,3)+", "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()+" – "+DOW[it.end.getDay()].slice(0,3)+", "+MON[it.end.getMonth()].slice(0,3)+" "+it.end.getDate()+", "+it.end.getFullYear();
+        row.innerHTML='<div class="ec-wr-t"><i></i>'+escapeHtml(ev.name)+'</div>'+
+          '<div class="ec-wr-m">'+escapeHtml(dr)+
+          (ev.timeText?'<br>'+escapeHtml(ev.timeText):'')+
+          (ev.location?'<br><u>'+escapeHtml(ev.location)+'</u>':'')+'</div>';
+        row.addEventListener("click",()=>openModal(ev,it.start));
+        list.appendChild(row);
+      });
+    }
+    wv.appendChild(list);
   }
 
   /* ---------- render cards view ---------- */
@@ -411,30 +433,56 @@
     const mStart=new Date(y,m,1), mEnd=new Date(y,m+1,0);
     const inst=instancesInWindow(filtered(), mStart, mEnd)
       .filter(it=> it.end>=mStart && it.start<=mEnd);
-    // one card per event per month: recurring events collapse to their first occurrence
-    const seen=new Set(); const cards=[];
     inst.sort((a,b)=> a.start-b.start || a.ev.name.localeCompare(b.ev.name));
+    if(!inst.length){ cv.innerHTML='<div class="ec-cards-empty">No events this month.</div>'; return; }
     inst.forEach(it=>{
-      const k=it.ev.slug||it.ev.name;
-      if(it.ev.recurring){ if(seen.has(k)) return; seen.add(k); }
-      cards.push(it);
-    });
-    if(!cards.length){ cv.innerHTML='<div class="ec-cards-empty">No events this month.</div>'; return; }
-    cards.forEach(it=>{
       const ev=it.ev, c=colorFor(ev);
       const el=document.createElement("div"); el.className="ec-card";
       el.style.setProperty("--ec-c",c);
-      const dateLabel = ev.recurring
-        ? "Recurring · from "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()
-        : (sameDay(it.start,it.end)
-            ? DOW[it.start.getDay()]+", "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()
-            : MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()+" – "+MON[it.end.getMonth()].slice(0,3)+" "+it.end.getDate());
-      el.innerHTML=(ev.image?'<img src="'+ev.image+'" alt="" loading="lazy">':'')+
-        '<div class="ec-card-body"><div class="ec-card-cat">'+escapeHtml(ev.category||"Event")+'</div>'+
-        '<h4>'+escapeHtml(ev.name)+'</h4>'+
-        '<div class="ec-card-meta">'+escapeHtml(dateLabel)+(ev.timeText?'<br>'+escapeHtml(ev.timeText):'')+
-        (ev.location?'<br>'+escapeHtml(ev.location):'')+'</div></div>';
-      el.addEventListener("click",()=>openModal(ev,it.start));
+      const dateRow = sameDay(it.start,it.end)
+        ? DOW[it.start.getDay()]+", "+MON[it.start.getMonth()]+" "+it.start.getDate()+", "+it.start.getFullYear()
+        : DOW[it.start.getDay()].slice(0,3)+", "+MON[it.start.getMonth()].slice(0,3)+" "+it.start.getDate()+" – "+DOW[it.end.getDay()].slice(0,3)+", "+MON[it.end.getMonth()].slice(0,3)+" "+it.end.getDate();
+      const chips=[ev.audience,ev.locationType,ev.category].filter(Boolean)
+        .map(x=>'<span class="ec-chip">'+escapeHtml(x)+'</span>').join('');
+      const plain=stripHtml(ev.descHTML).trim();
+      const LIMIT=150;
+      const truncated=plain.length>LIMIT;
+      const descShort=truncated? plain.slice(0,LIMIT).replace(/\s+\S*$/,'')+"…" : plain;
+      el.innerHTML=
+        '<div class="ec-card-media">'+
+          (ev.image?'<img src="'+ev.image+'" alt="" loading="lazy">':'<div style="height:64px"></div>')+
+          '<div class="ec-card-date"><b>'+it.start.getDate()+'</b><span>'+MON[it.start.getMonth()].slice(0,3)+'</span></div>'+
+        '</div>'+
+        '<div class="ec-card-body">'+
+          '<h4>'+escapeHtml(ev.name)+'</h4>'+
+          '<div class="ec-card-rows">'+
+            '<div><span class="ec-ic">🗓</span><span>'+escapeHtml(dateRow)+'</span></div>'+
+            (ev.timeText?'<div><span class="ec-ic">🕐</span><span>'+escapeHtml(ev.timeText)+'</span></div>':'')+
+            (ev.location?'<div><span class="ec-ic">📍</span><span>'+escapeHtml(ev.location)+'</span></div>':'')+
+          '</div>'+
+          (chips?'<div class="ec-card-chips">'+chips+'</div>':'')+
+          (plain?'<div class="ec-card-desc">'+escapeHtml(descShort)+
+            (truncated?'<span class="ec-showmore">show more</span>':'')+'</div>':'')+
+        '</div>'+
+        '<div class="ec-card-foot">'+
+          (ev.cta1.text&&ev.cta1.link?'<a class="ec-btn ec-btn-primary" href="'+encodeURI(ev.cta1.link)+'" target="_blank" rel="noopener">'+escapeHtml(ev.cta1.text)+'</a>':'')+
+          '<button class="ec-icon-btn ec-card-share" title="Share">↗</button>'+
+          '<button class="ec-icon-btn ec-card-atc" title="Add to calendar">＋</button>'+
+        '</div>';
+      const open=()=>openModal(ev,it.start);
+      el.querySelector(".ec-card-media").addEventListener("click",open);
+      el.querySelector("h4").addEventListener("click",open);
+      const sm=el.querySelector(".ec-showmore"); if(sm) sm.addEventListener("click",e=>{e.stopPropagation();open();});
+      el.querySelector(".ec-card-share").addEventListener("click",e=>{
+        e.stopPropagation();
+        const url=SITE+(ev.slug||"");
+        if(navigator.share){ navigator.share({title:ev.name,url}).catch(()=>{}); }
+        else { navigator.clipboard.writeText(url); const b=e.currentTarget; b.textContent="✓"; setTimeout(()=>b.textContent="↗",1400); }
+      });
+      el.querySelector(".ec-card-atc").addEventListener("click",e=>{
+        e.stopPropagation();
+        window.open(gcalLink(ev,it.start),"_blank","noopener");
+      });
       cv.appendChild(el);
     });
   }
@@ -465,7 +513,7 @@
     ALL=readEvents(); fillFilters(); renderPills(); render();
     document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>{
       const dir=+b.dataset.nav;
-      if(mode==="week"){ view=addDays(startOfDay(view),dir*7); }
+      if(mode==="week"){ view=addDays(startOfDay(view),dir*7); selDay=null; }
       else { view=new Date(view.getFullYear(),view.getMonth()+dir,1); }
       render();
     }));
