@@ -330,7 +330,7 @@
     const ctas=[ev.cta1,ev.cta2].filter(x=>x.text&&x.link);
     modal.innerHTML=
       '<button class="ec-x" aria-label="Close">×</button>'+
-      (ev.image?'<div class="ec-hero-wrap" style="--ec-img:url(&quot;'+encodeURI(ev.image)+'&quot;)"><img class="ec-hero" src="'+encodeURI(ev.image)+'" alt=""></div>':'')+
+      (ev.image?'<div class="ec-hero-wrap"><img class="ec-hero" src="'+ev.image+'" alt=""></div>':'')+
       '<div class="ec-body">'+
         '<div class="ec-cat-tag">'+escapeHtml(ev.category||"Event")+'</div>'+
         '<h3>'+escapeHtml(ev.name)+'</h3>'+
@@ -351,6 +351,8 @@
         '</div>'+
       '</div>';
     modal.querySelector(".ec-x").addEventListener("click",closeModal);
+    const hw=modal.querySelector(".ec-hero-wrap");
+    if(hw) hw.style.setProperty("--ec-img",'url("'+ev.image.replace(/"/g,'\\"')+'")');
     const atcBtn=modal.querySelector("#ec-atc-btn"), atcMenu=modal.querySelector("#ec-atc-menu");
     atcBtn.addEventListener("click",e=>{e.stopPropagation();atcMenu.classList.toggle("ec-open");});
     modal.querySelector("#ec-share").addEventListener("click",()=>{
