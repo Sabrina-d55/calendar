@@ -178,7 +178,7 @@
   animation:ec-pop .18s ease}
 @keyframes ec-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 #ec-cal .ec-scroll{overflow-y:auto;flex:1;min-height:0}
-#ec-cal .ec-modal img.ec-hero{width:100%;height:auto;display:block;border-radius:16px 16px 0 0}
+#ec-cal .ec-modal img.ec-hero{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center center;display:block;border-radius:16px 16px 0 0}
 #ec-cal .ec-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:none;
   border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;z-index:2;flex:none}
