@@ -274,7 +274,9 @@
       .filter(it=> it.start<=d && it.end>=d);
     const modal=document.getElementById("ec-modal");
     modal.innerHTML='<button class="ec-x" aria-label="Close">×</button>'+
-      '<div class="ec-body"><h3 style="margin-bottom:16px">'+DOW[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate()+'</h3></div>';
+      '<div class="ec-scroll">'+
+      '<div class="ec-body"><h3 style="margin-bottom:16px">'+DOW[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate()+'</h3></div>'+
+      '</div>';
     const body=modal.querySelector(".ec-body");
     inst.forEach(it=>{
       const row=document.createElement("div"); row.className="ec-lcard";
@@ -330,6 +332,7 @@
     const ctas=[ev.cta1,ev.cta2].filter(x=>x.text&&x.link);
     modal.innerHTML=
       '<button class="ec-x" aria-label="Close">×</button>'+
+      '<div class="ec-scroll">'+
       (ev.image?'<img class="ec-hero" src="'+ev.image+'" alt="">':'')+
       '<div class="ec-body">'+
         '<div class="ec-cat-tag">'+escapeHtml(ev.category||"Event")+'</div>'+
@@ -349,6 +352,7 @@
             '</div></div>'+
           '<button class="ec-action" id="ec-share"><span>↗</span> Share</button>'+
         '</div>'+
+      '</div>'+
       '</div>';
     modal.querySelector(".ec-x").addEventListener("click",closeModal);
     const atcBtn=modal.querySelector("#ec-atc-btn"), atcMenu=modal.querySelector("#ec-atc-menu");
