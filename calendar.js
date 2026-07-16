@@ -330,7 +330,7 @@
     const ctas=[ev.cta1,ev.cta2].filter(x=>x.text&&x.link);
     modal.innerHTML=
       '<button class="ec-x" aria-label="Close">×</button>'+
-      (ev.image?'<img class="ec-hero" src="'+ev.image+'" alt="">':'')+
+      (ev.image?'<div class="ec-hero-wrap" style="--ec-img:url(&quot;'+encodeURI(ev.image)+'&quot;)"><img class="ec-hero" src="'+encodeURI(ev.image)+'" alt=""></div>':'')+
       '<div class="ec-body">'+
         '<div class="ec-cat-tag">'+escapeHtml(ev.category||"Event")+'</div>'+
         '<h3>'+escapeHtml(ev.name)+'</h3>'+
