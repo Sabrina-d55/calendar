@@ -177,12 +177,7 @@
   max-height:86vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--ec-shadow);position:relative;
   animation:ec-pop .18s ease}
 @keyframes ec-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
-#ec-cal .ec-hero-wrap{position:relative;height:min(44vh,340px);border-radius:16px 16px 0 0;
-  overflow:hidden;flex:none;background:#e6e8ec}
-#ec-cal .ec-hero-wrap::before{content:"";position:absolute;inset:0;
-  background-image:var(--ec-img);background-size:cover;background-position:center;
-  filter:blur(20px) saturate(1.05);transform:scale(1.18);opacity:.9}
-#ec-cal .ec-modal img.ec-hero{position:relative;width:100%;height:100%;object-fit:contain;display:block}
+#ec-cal .ec-modal img.ec-hero{width:100%;height:auto;display:block;border-radius:16px 16px 0 0;flex:none}
 #ec-cal .ec-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:none;
   border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;z-index:2;flex:none}
@@ -232,7 +227,6 @@
   #ec-cal .ec-cards.ec-show{grid-template-columns:1fr}
   #ec-cal .ec-overlay{padding:12px}
   #ec-cal .ec-modal{max-height:92vh}
-  #ec-cal .ec-hero-wrap{height:32vh}
   #ec-cal .ec-body{padding:18px 18px 20px}
   #ec-cal .ec-toolbar{gap:10px}
   #ec-cal .ec-views{margin-left:auto;gap:12px}
