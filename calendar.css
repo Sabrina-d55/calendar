@@ -76,7 +76,7 @@
   width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1.5px solid transparent}
 #ec-cal .ec-wsday.ec-sel .ec-wn{border-color:var(--ec-ink)}
 #ec-cal .ec-wsday.ec-sel{box-shadow:inset 0 -2px 0 var(--ec-ink)}
-#ec-cal .ec-wsday.ec-today .ec-wn{color:var(--ec-accent);font-weight:700}
+#ec-cal .ec-wsday.ec-today .ec-wn{background:#ffde59;color:var(--ec-ink);font-weight:700}
 #ec-cal .ec-wdots{display:flex;gap:3px;justify-content:center;margin-top:5px;min-height:6px}
 #ec-cal .ec-wdots i{width:6px;height:6px;border-radius:50%;display:block}
 #ec-cal .ec-wlist{border:1px solid var(--ec-line);border-radius:8px;margin-top:14px;overflow:hidden}
@@ -148,8 +148,8 @@
 #ec-cal .ec-cell.ec-out .ec-daynum{color:#c4c8ce}
 #ec-cal .ec-daynum{font-size:13px;font-weight:500;color:var(--ec-ink);
   width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%}
-#ec-cal .ec-cell.ec-today .ec-daynum{background:var(--ec-accent);color:#fff}
-#ec-cal .ec-cell.ec-today{background:var(--ec-today)}
+#ec-cal .ec-cell.ec-today .ec-daynum{background:#ffde59;color:var(--ec-ink);font-weight:600}
+#ec-cal .ec-cell.ec-today{background:#fffbe9}
 
 /* --- Event bars overlay (spanning multi-day) --- */
 #ec-cal .ec-bars{position:absolute;left:0;right:0;top:36px;display:grid;
